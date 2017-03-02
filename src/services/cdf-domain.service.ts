@@ -6,10 +6,15 @@ import
 
 import 
 { 
-    ApiTwitterModel,
     BaseDomainModel,
     BaseDomainInterface
 }	                            from '../models/index'; 
+
+import 
+{ 
+    ApiTwitterModel
+}	                            from '../models/domains/api-twitter-com.model'; 
+
 import { CdfConfigService }     from '../services/index';
 
 @Injectable()
