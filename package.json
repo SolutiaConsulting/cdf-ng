@@ -2,7 +2,7 @@
   "name": "@cdf/cdf-ng",
   "version": "1.0.0",
   "description": "Content Delivery Framework for Angular",
-  "main": "index.js",
+  "main": "./src/index.ts",
   "dependencies": {},
   "devDependencies": {
     "chai": "^3.5.0",
@@ -21,7 +21,7 @@
     "Framework"
   ],
   "author": "Tom Schreck <tom_schreck@solutiaconsulting.com> (http://solutiaconsulting.com)",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/SolutiaConsulting/cdf-ng/issues"
   },
