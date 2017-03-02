@@ -1,6 +1,8 @@
 # cdf-ng
 Content Delivery Framework for Angular
 
+[![Build Status](https://travis-ci.org/SolutiaConsulting/cdf-ng.svg?branch=master)](https://travis-ci.org/SolutiaConsulting/cdf-ng)
+[![Coverage Status](https://coveralls.io/repos/github/SolutiaConsulting/cdf-ng/badge.svg?branch=master)](https://coveralls.io/github/SolutiaConsulting/cdf-ng?branch=master)
 
 CDF-NG
 =========
