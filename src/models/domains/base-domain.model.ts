@@ -322,8 +322,8 @@ export class BaseDomainModel implements BaseDomainInterface
 						{
 							//console.log('STEP 2.  SUCCESS HANDLED AUTH ERROR:', newToken);
 							
-							//THROW ERROR SO RETRY ATTEMPT OF CdfRequestModel GETS INITIATED NOW THAT WE HAVE AN ACCESS TOKEN  
-							//(SEE retryWhen IN CDF-DATA.COMPONENT.TS) 
+							//THROW ERROR SO RETRY ATTEMPTS GETS INITIATED NOW THAT WE HAVE AN ACCESS TOKEN  
+							//(SEE retryWhen IN cdf-data.service) 
 							//AT THIS POINT, WE HAVE A SHINY NEW VALID TOKEN FROM WHICH TO GET DATA...
 							observer.error(err);
 						},

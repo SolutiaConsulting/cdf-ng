@@ -9,8 +9,9 @@ export class CdfRequestModel
 	PutList: CdfRestModel[] = [];
 	DeleteList: CdfRestModel[] = [];
 
-	constructor()
+	constructor(applicationKey: string)
 	{
+		this.ApplicationKey = applicationKey;
 	}
 
 	
