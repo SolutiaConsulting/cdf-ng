@@ -1,5 +1,6 @@
 .vscode
 aot
+coverage
 /lib
 /lib-temp
 node_modules

@@ -1,5 +1,7 @@
 # Node generated files
 node_modules
+aot
+coverage
 npm-debug.log
 
 
