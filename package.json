@@ -1,6 +1,6 @@
 {
   "name": "@cdf/cdf-ng",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "Tom Schreck <tom_schreck@solutiaconsulting.com> (http://solutiaconsulting.com)",
   "homepage": "https://github.com/SolutiaConsulting/cdf-ng#readme",
   "license": "MIT",
@@ -18,10 +18,10 @@
     "clean:aot": "rimraf aot/*",
     "clean:lib": "rimraf lib/*",
     "clean:lib-temp": "rimraf lib-temp/*",
-    "clean":"npm run clean:aot && npm run clean:lib && npm run clean:lib-temp",
+    "clean": "npm run clean:aot && npm run clean:lib && npm run clean:lib-temp",
     "copy:assets": "cpx \"src/assets/**/*\" lib/assets",
     "copy:src": "cpx \"lib-temp/src/**/*\" lib",
-    "copy":"npm run copy:assets && npm run copy:src",
+    "copy": "npm run copy:assets && npm run copy:src",
     "ngc": "node_modules/.bin/ngc -p tsconfig-aot.json",
     "b": "npm run clean && npm run ngc && npm run copy && npm run clean:lib-temp"
   },
@@ -31,7 +31,7 @@
   },
   "bugs": {
     "url": "https://github.com/SolutiaConsulting/cdf-ng/issues"
-  },  
+  },
   "typings": "./lib/index.d.ts",
   "dependencies": {},
   "devDependencies": {
