@@ -1,0 +1,29 @@
+{
+  "name": "@cdf/cdf-ng",
+  "version": "1.0.0",
+  "description": "Content Delivery Framework for Angular",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0"
+  },
+  "scripts": {
+    "test": "mocha --reporter nyan"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SolutiaConsulting/cdf-ng.git"
+  },
+  "keywords": [
+    "Content",
+    "Delivery",
+    "Framework"
+  ],
+  "author": "Tom Schreck <tom_schreck@solutiaconsulting.com> (http://solutiaconsulting.com)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SolutiaConsulting/cdf-ng/issues"
+  },
+  "homepage": "https://github.com/SolutiaConsulting/cdf-ng#readme"
+}
