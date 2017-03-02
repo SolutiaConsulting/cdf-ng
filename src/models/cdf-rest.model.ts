@@ -6,13 +6,18 @@ export class CdfRestModel
 	Body: Object;
 	AuthorizationModel: CdfAuthorizationModel = new CdfAuthorizationModel();
 
-	constructor(url: string, body?: Object)
+	constructor(url: string, body?: Object, authorizationModel?: CdfAuthorizationModel)
 	{
 		this.URL = url;
 
 		if (body)
 		{ 
 			this.Body = body;
-		}			
+		}	
+		
+		if (authorizationModel)
+		{ 
+			this.AuthorizationModel = authorizationModel;
+		}
 	}
 }

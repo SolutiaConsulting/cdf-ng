@@ -58,21 +58,21 @@ export class CdfRequestModel
 	}
 
 
-	private PopulateRestTypeArray(restTypeArray: CdfRestModel[], request: CdfRestModel | CdfRestModel[])
+	private PopulateRestTypeArray(restModelArray: CdfRestModel[], requestModel: CdfRestModel | CdfRestModel[])
 	{ 
 		//IF REQUEST IS AN ARRAY, THEN PUSH EACH REST MODEL
-		if (request instanceof Array)
+		if (requestModel instanceof Array)
 		{ 
-			request.map(function (item)
+			requestModel.map(function (item)
 			{ 
-				restTypeArray.push(item);
+				restModelArray.push(item);
 			});
 		}
 		
 		//ELSE, REQUEST IS A SINGLE INSTANCE OF REST MODEL
 		else
 		{
-			restTypeArray.push(request);
+			restModelArray.push(requestModel);
 		}		
 	}	
 }
