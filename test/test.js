@@ -1,16 +1,25 @@
-'use strict';
+// import '@angular/common';
+// import { expect } from 'chai';
+// import { assert } from 'chai';
+// import { CdfRequestModel } from  '../src/models';
 
-var expect = require('chai').expect;
-//var CdfModule = require('../src/cdf.module.ts');
-
-describe('#numFormatter', function () 
+describe('CDF Request Model Unit Tests:', function () 
 {
-    // it('should convert single digits', function () 
+    // it('should create a new CdfRequestModel component', function () 
     // {
     //     var requestModel = new CdfRequestModel();
     //     requestModel.ApplicationKey = 'ABCDEFG-12345';
         
     //     expect(requestModel.ApplicationKey).to.equal('ABCDEFG-12345');
+    // });
+
+    // it('should create a new CdfRequestModel component', (done) => 
+    // {
+    //     var requestModel = new CdfRequestModel();
+    //     requestModel.ApplicationKey = 'ABCDEFG-12345';
+
+    //     expect(requestModel.ApplicationKey).to.be.equals("ABCDEFG-12345");
+    //     done();
     // });
 
     // it('should convert double digits', function() {

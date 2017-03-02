@@ -14,7 +14,7 @@ import
     CdfConfigService,
     CdfDomainService
 }                               from '../../services/index'; 
-import { CdfPostModel }			from '../index';
+import { CdfRestModel }			from '../index';
 import { BaseDomainModel }      from './base-domain.model';
 
 @Injectable()
@@ -62,7 +62,7 @@ export class ApiTwitterModel extends BaseDomainModel
 	};	    
     
 	//PHYSICAL HTTP POST CALL TO DOMAIN FOR RESULT DATA...
-	HttpPost(postModel: CdfPostModel): Observable<any>
+	HttpPost(postModel: CdfRestModel): Observable<any>
 	{ 
         let headers = new Headers({ 'Content-Type': 'application/json' }); 	// ... Set content type to JSON
         let options = new RequestOptions({ headers: headers });				

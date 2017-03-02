@@ -1,15 +1,13 @@
-import { CdfDeleteModel }	from './cdf-delete.model';
-import { CdfGetModel } 		from './cdf-get.model';
-import { CdfPostModel } 	from './cdf-post.model';
-
+import { CdfRestModel } 	from './cdf-rest.model';
 
 export class CdfRequestModel
 {
 	ApplicationKey: string;
 	CacheKey?: string;	
-	GetList: CdfGetModel[] = []; 
-	PostList: CdfPostModel[] = [];
-	DeleteList: CdfDeleteModel[] = [];
+	GetList: CdfRestModel[] = []; 
+	PostList: CdfRestModel[] = [];
+	PutList: CdfRestModel[] = [];
+	DeleteList: CdfRestModel[] = [];
 
 	constructor()
 	{

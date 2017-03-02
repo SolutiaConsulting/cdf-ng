@@ -19,8 +19,7 @@ import
 } 								from '@angular/http';
 
 import { BaseDomainInterface } 		from './base-domain.interface';
-import { CdfDeleteModel }	        from '../cdf-delete.model';
-import { CdfPostModel }				from '../cdf-post.model';
+import { CdfRestModel }				from '../cdf-rest.model';
 import
 {
 	CdfConfigService,
@@ -200,7 +199,7 @@ export class BaseDomainModel implements BaseDomainInterface
 	};
 
 	
-	//PHYSICAL HTTP GET CALL TO DOMAIN FOR RESULT DATA...
+	//HTTP GET CALL TO DOMAIN FOR RESULT DATA...
 	HttpGet(url: string): Observable<any>
 	{
 		let headers = new Headers({ 'Content-Type': 'application/json' }); 	// ... Set content type to JSON
@@ -224,8 +223,9 @@ export class BaseDomainModel implements BaseDomainInterface
 			});
 	};	
     
-	//PHYSICAL HTTP POST CALL TO DOMAIN FOR RESULT DATA...
-	HttpPost(postModel: CdfPostModel): Observable<any>
+
+	//HTTP POST CALL TO DOMAIN FOR RESULT DATA...
+	HttpPost(postModel: CdfRestModel): Observable<any>
 	{ 
         let headers = new Headers({ 'Content-Type': 'application/json' }); 	// ... Set content type to JSON
 		let options = new RequestOptions({ headers: headers });	
@@ -250,8 +250,35 @@ export class BaseDomainModel implements BaseDomainInterface
 			});
 	};	
     
-	//PHYSICAL HTTP DELETE CALL TO DOMAIN FOR RESULT DATA...
-	HttpDelete(deleteModel: CdfDeleteModel): Observable<any>
+
+	//HTTP PUT CALL TO DOMAIN FOR RESULT DATA...
+	HttpPut(putModel: CdfRestModel): Observable<any>
+	{ 
+        let headers = new Headers({ 'Content-Type': 'application/json' }); 	// ... Set content type to JSON
+		let options = new RequestOptions({ headers: headers });	
+		
+        //APPEND TO HEADER: Authorization : Bearer [token]
+        if (this.HasToken())
+		{
+			let bearerToken = this.GetToken();
+
+            options.headers.append('Authorization', bearerToken);
+            options.headers.append('Access-Control-Allow-Origin', '*');
+        }
+                        
+        //console.log('************* PUT BODY *************:', JSON.stringify(putModel.Body));
+
+		return this.http.put(putModel.URL, JSON.stringify(putModel.Body), options)
+			.map((res: Response) => (res['_body'] && res['_body'].length) ? res.json() : {})
+			.catch((err) => this.HandleError(err, putModel.URL))
+			.finally(() =>
+			{ 
+			});
+	};	
+    
+
+	//HTTP DELETE CALL TO DOMAIN FOR RESULT DATA...
+	HttpDelete(deleteModel: CdfRestModel): Observable<any>
 	{ 
         let headers = new Headers({ 'Content-Type': 'application/json' }); 	// ... Set content type to JSON
 		let options = new RequestOptions({ headers: headers });	
