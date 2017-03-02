@@ -1,6 +1,6 @@
 {
   "name": "@cdf/cdf-ng",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Content Delivery Framework for Angular",
   "main": "./src/index.ts",
   "dependencies": {},
