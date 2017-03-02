@@ -4,7 +4,7 @@ export class CdfRestModel
 {
 	URL: string;
 	Body: Object;
-	AuthorizationModel: CdfAuthorizationModel = new CdfAuthorizationModel();
+	AuthorizationModel: CdfAuthorizationModel = new CdfAuthorizationModel(undefined, undefined);
 
 	constructor(url: string, body?: Object, authorizationModel?: CdfAuthorizationModel)
 	{

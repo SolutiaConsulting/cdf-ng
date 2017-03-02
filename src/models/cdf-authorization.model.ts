@@ -4,15 +4,14 @@ export class CdfAuthorizationModel
 	AuthorizationToken: string = undefined;
 	HasAuthorizationToken: boolean = false;
 
-	constructor()
+	constructor(tokenType: string, authorizationToken: string)
 	{
-	}
-
-	SetAuthorization(tokenType: string, authorizationToken: string)
-	{ 
-		this.TokenType = (tokenType) ? tokenType : 'Bearer';
-		this.AuthorizationToken = authorizationToken;
-		this.HasAuthorizationToken = true;
+		if (tokenType && authorizationToken)
+		{ 
+			this.TokenType = (tokenType) ? tokenType : 'Bearer';
+			this.AuthorizationToken = authorizationToken;
+			this.HasAuthorizationToken = true;
+		}	
 	}
 
 	GetAuthorization()
