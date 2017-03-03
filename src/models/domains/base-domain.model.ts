@@ -1,5 +1,5 @@
-import { ReflectiveInjector}    from '@angular/core';
-import { Observable } 			from 'rxjs/Rx';
+import { ReflectiveInjector}    	from '@angular/core';
+import { Observable } 				from 'rxjs/Rx';
 import
 {
 	Http,
@@ -16,15 +16,11 @@ import
 	ResponseOptions,
 	BaseResponseOptions,
 	XSRFStrategy
-} 								from '@angular/http';
+} 									from '@angular/http';
 
 import { BaseDomainInterface } 		from './base-domain.interface';
 import { CdfRestModel }				from '../cdf-rest.model';
-import
-{
-	CdfConfigService,
-	CdfDomainService
-} 									from '../../services/index'; 
+import { CdfConfigService } 		from '../../services/index'; 
 import { CdfAuthorizationModel }	from '../cdf-authorization.model';
 
 export class BaseDomainModel implements BaseDomainInterface 

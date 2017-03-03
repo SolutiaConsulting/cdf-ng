@@ -11,8 +11,7 @@ import
 
 import
 {
-    CdfConfigService,
-    CdfDomainService
+    CdfConfigService
 }                               from '../../services/index'; 
 import { CdfRestModel }			from '../index';
 import { BaseDomainModel }      from './base-domain.model';
