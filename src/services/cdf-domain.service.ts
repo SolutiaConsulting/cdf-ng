@@ -2,17 +2,18 @@ import
 { 
     ReflectiveInjector 
 } 		                        from '@angular/core';
+import
+{
+    Request,
+    RequestOptions
+}                               from '@angular/http';
 
 import 
 { 
+    ApiTwitterModel,
     BaseDomainModel,
     BaseDomainInterface
 }	                            from '../models/index'; 
-
-import 
-{ 
-    ApiTwitterModel
-}	                            from '../models/domains/api-twitter.model'; 
 
 
 export class CdfDomainService 
@@ -32,9 +33,9 @@ export class CdfDomainService
         return proxyList;
     }
 
-    static GetDomainModelFromUrl(domainUrl: string, applicationKey: string) : BaseDomainInterface
+    static GetDomainModelFromUrl(request: RequestOptions, applicationKey: string) : BaseDomainInterface
     {
-        let domainRootUrl = CdfDomainService.GetDomainRootFromUrl(domainUrl);
+        let domainRootUrl = CdfDomainService.GetDomainRootFromUrl(request.url);
 
         return CdfDomainService.GetDomainModel(domainRootUrl, applicationKey);        
     };

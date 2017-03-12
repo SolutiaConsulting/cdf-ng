@@ -1,30 +1,30 @@
-import { Observable } 			    from 'rxjs/Rx';
-import { Http } 				    from '@angular/http';
+import { Observable } 			            from 'rxjs/Rx';
+import
+{
+    Http,
+    Request,
+    RequestOptions
+}                                           from '@angular/http';
 
-import { CdfRestModel }			    from '../cdf-rest.model';
-import { CdfAuthorizationModel }    from '../cdf-authorization.model';
+import { CdfAuthenticationTokenModel } 		from '../index';
 
 export interface BaseDomainInterface 
 {
-    AuthorizationModel: CdfAuthorizationModel;
 	DomainRootUrl: string;
 	ApplicationKey: string;    
     InjectHttp() : Http;
     
-    SetAuthorizationModel(authorizationModel: CdfAuthorizationModel): void;
-
     HasToken(): boolean;
+    SetToken(tokenModel: CdfAuthenticationTokenModel): void 
     GetTokenValueFromStorage(): string;
-    GetToken(): string; 
-    SetToken(token: any): void;   
+    GetBearerToken(): string; 
     DeleteToken(): void;    
     
     HashUrlFragment(urlFragment : string) : number;
 
-    AuthenticateObservable(url: string) : Observable<any>;
-    HttpGet(url: string): Observable<any>;
-    HttpPost(postModel: CdfRestModel): Observable<any>;
-    HttpPut(postModel: CdfRestModel): Observable<any>;
-    HttpDelete(deleteModel: CdfRestModel): Observable<any>;
+    AuthenticateObservable(url: string): Observable<any>;
+    HttpRequest(requestOptions: RequestOptions): Observable<any>;
+    CreateRequest(requestOptions: RequestOptions): Request;
+
     HandleError(err: any, url: string): Observable<any>;
 }

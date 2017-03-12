@@ -1,79 +1,98 @@
-import { CdfRestModel } 	from './cdf-rest.model';
+import
+{
+	Headers,
+	Request,
+	ResponseContentType,
+	RequestMethod,
+	RequestOptions
+} 									from '@angular/http';
 
 export class CdfRequestModel
 {
 	ApplicationKey: string;
 	CacheKey?: string;	
-	GetList: CdfRestModel[] = []; 
-	PostList: CdfRestModel[] = [];
-	PutList: CdfRestModel[] = [];
-	DeleteList: CdfRestModel[] = [];
+	RequestOptionsList: RequestOptions[] = []; 
 
 	constructor(applicationKey: string)
 	{
 		this.ApplicationKey = applicationKey;
 	}
 
-	
-	AddGetRequest(request: CdfRestModel | CdfRestModel[])
+	AddRequest(requestOptions: RequestOptions | RequestOptions[])
 	{ 
-		if (!this.GetList)
+		if (!this.RequestOptionsList)
 		{ 
-			this.GetList = [];
-		}	
+			this.RequestOptionsList = [];
+		}
 
-		this.PopulateRestTypeArray(this.GetList, request);
-	}
-
-	
-	AddPostRequest(request: CdfRestModel | CdfRestModel[])
-	{ 
-		if (!this.PostList)
+		//IF REQUEST OPTIONS IS AN ARRAY, THEN PUSH EACH ITEM INTO REQUEST LIST AS A REQUEST
+		if (requestOptions instanceof Array)
 		{ 
-			this.PostList = [];
-		}	
-
-		this.PopulateRestTypeArray(this.PostList, request);
-	}
-
-	
-	AddPutRequest(request: CdfRestModel | CdfRestModel[])
-	{ 
-		if (!this.PutList)
-		{ 
-			this.PutList = [];
-		}	
-
-		this.PopulateRestTypeArray(this.PutList, request);
-	}
-
-	
-	AddDeleteRequest(request: CdfRestModel | CdfRestModel[])
-	{ 
-		if (!this.DeleteList)
-		{ 
-			this.DeleteList = [];
-		}	
-
-		this.PopulateRestTypeArray(this.DeleteList, request);
-	}
-
-
-	private PopulateRestTypeArray(restModelArray: CdfRestModel[], requestModel: CdfRestModel | CdfRestModel[])
-	{ 
-		//IF REQUEST IS AN ARRAY, THEN PUSH EACH REST MODEL
-		if (requestModel instanceof Array)
-		{ 
-			requestModel.map(function (item)
+			requestOptions.map(function (item)
 			{ 
-				restModelArray.push(item);
+				this.RequestOptionsList.push(item);
 			});
 		}
 		
-		//ELSE, REQUEST IS A SINGLE INSTANCE OF REST MODEL
+		//ELSE, REQUEST IS A SINGLE INSTANCE OF REQUEST OPTIONS
 		else
 		{
-			restModelArray.push(requestModel);
+			this.RequestOptionsList.push(requestOptions);
 		}		
+	};
+
+	static CreateGetRequest(url: string, body?: Object, authorization?: string): RequestOptions
+	{ 
+		return CdfRequestModel.CreateRequest(RequestMethod.Get, url, body, authorization);
+	}
+
+	static CreatePostRequest(url: string, body?: Object, authorization?: string): RequestOptions
+	{ 
+		return CdfRequestModel.CreateRequest(RequestMethod.Post, url, body, authorization);
+	}
+
+	static CreatePutRequest(url: string, body?: Object, authorization?: string): RequestOptions
+	{ 
+		return CdfRequestModel.CreateRequest(RequestMethod.Put, url, body, authorization);
+	}
+
+	static CreateDeleteRequest(url: string, body?: Object, authorization?: string): RequestOptions
+	{ 
+		return CdfRequestModel.CreateRequest(RequestMethod.Delete, url, body, authorization);
+	}
+
+	static CreateRequest(requestMethod: RequestMethod, url: string, body?: Object, authorization?: string): RequestOptions
+	{ 
+		let headers = new Headers(
+			{
+				'Content-Type': 'application/json',
+			});
+
+		//IF USER IS AUTHENTICATED...
+		if (authorization)
+		{
+			headers[ 'Authorization' ] = authorization;
+		}
+		
+		let requestOptions = new RequestOptions(
+			{
+				method: requestMethod,
+				url: url,
+				headers: headers,
+				responseType: ResponseContentType.Json,
+				body : body
+			});
+
+		return requestOptions;
+	}
+
+	static DoesRequestHaveAuthentication(requestOptions: RequestOptions)
+	{ 
+		return (requestOptions.headers && (requestOptions.headers['Authorization'] || requestOptions.headers['authorization']));
+	}
+
+	static GetAuthenticationValue(requestOptions: RequestOptions) : string
+	{ 
+		return (requestOptions.headers && (requestOptions.headers['Authorization'] || requestOptions.headers['authorization'])) ? requestOptions.headers['Authorization'] : '';
 	}	
 }

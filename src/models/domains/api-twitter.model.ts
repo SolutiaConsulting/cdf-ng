@@ -1,4 +1,3 @@
-import { Injectable }           from '@angular/core';
 import { Observable } 			from 'rxjs/Rx';
 import 
 { 
@@ -9,14 +8,10 @@ import
 	Response
 } 								from '@angular/http';
 
-import
-{
-    CdfConfigService
-}                               from '../../services/index'; 
-import { CdfRestModel }			from '../index';
+import { CdfConfigService }     from '../../services/index'; 
 import { BaseDomainModel }      from './base-domain.model';
 
-@Injectable()
+
 export class ApiTwitterModel extends BaseDomainModel
 {
     readonly TWITTER_API_URL = 'https://api.twitter.com/1.1/';    
@@ -30,60 +25,26 @@ export class ApiTwitterModel extends BaseDomainModel
         this.http = super.InjectHttp();       
     }     
 
-	//PHYSICAL HTTP GET CALL TO DOMAIN FOR RESULT DATA...
-	HttpGet(url: string): Observable<any>
-	{
-		let headers = new Headers({ 'Content-Type': 'application/json' }); 	// ... Set content type to JSON
-		let options = new RequestOptions({ headers: headers });		
-        let bearerToken = (super.HasToken()) ? super.GetTokenValueFromStorage() : 'TOKEN-NOT-KNOWN';
-        let urlFragment = url.replace(this.TWITTER_API_URL,'');
-        let urlFragmentHash = super.HashUrlFragment(urlFragment);
+	//HTTP REQUEST	
+	HttpRequest(requestOptions: RequestOptions): Observable<any>
+    {
+        let authorizationToken = (super.HasToken()) ? super.GetBearerToken() : 'TOKEN-NOT-KNOWN';
+        let urlFragment = requestOptions.url.replace(this.TWITTER_API_URL,'');
+        let urlFragmentHash = super.HashUrlFragment(urlFragment);        
         let twitterUrl = CdfConfigService.CDF_WEBAPI_BASE_URL + '/twitter/get/' + urlFragmentHash;
 
-        // console.log('BEARER TOKEN:', bearerToken);   
-        // console.log('TWITTER FRAGMENT:', urlFragment);
-        // console.log('TWITTER FRAGMENT HASH:', urlFragmentHash);
-        // console.log('TWITTER URL', twitterUrl);
-        // console.log('--------------------------------------------------------------------------'); 
+        requestOptions.url = twitterUrl;
+        requestOptions.headers.append('Authorization', authorizationToken);
+        requestOptions.headers.append('UrlFragment', urlFragment);
 
-        //APPEND TO HEADER:
-        options.headers.append('BearerToken', bearerToken);
-        options.headers.append('UrlFragment', urlFragment);					
-        options.body = '';
-        
-        return this.http.get(twitterUrl, options)
-            .map((res: Response) => (res['_body'] && res['_body'].length) ? res.json() : {})
-            .catch((err) => super.HandleError(err, url))
+        let request = super.CreateRequest(requestOptions);
+
+		return this.http.request(request)
+			.map((res: Response) => (res['_body'] && res['_body'].length) ? res.json() : {})
+			.catch((err) => this.HandleError(err, request.url))
 			.finally(() =>
 			{ 
 
 			});
-	};	    
-    
-	//PHYSICAL HTTP POST CALL TO DOMAIN FOR RESULT DATA...
-	HttpPost(postModel: CdfRestModel): Observable<any>
-	{ 
-        let headers = new Headers({ 'Content-Type': 'application/json' }); 	// ... Set content type to JSON
-        let options = new RequestOptions({ headers: headers });				
-        let urlFragment = postModel.URL.replace(this.TWITTER_API_URL, '');
-                                            
-        //console.log('************* POST BODY *************:', JSON.stringify(postModel.Body));
-
-        let requestModel = 
-        {
-            "BearerToken" : super.GetTokenValueFromStorage(),
-            "UrlFragment" : urlFragment,
-            "PostBody" : postModel.Body
-        };
-
-        let postUrl = CdfConfigService.CDF_WEBAPI_BASE_URL + '/twitter/post/request';
-
-        return this.http.post(postUrl, JSON.stringify(requestModel), options)
-           .map((res: Response) => (res['_body'] && res['_body'].length) ? res.json() : {})
-            .catch((err) => super.HandleError(err, postUrl))
-			.finally(() =>
-			{ 
-
-			});
-	};    
+	};  
 }

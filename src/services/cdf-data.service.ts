@@ -12,7 +12,7 @@ import
 import { CacheService }			from '../storage/cache.service';
 import 
 { 
-	CdfRestModel,
+	BaseDomainInterface,
 	CdfRequestModel 
 }								from '../models/index';
 import { CdfDomainService }		from './cdf-domain.service';
@@ -37,8 +37,8 @@ export class CdfDataService
 			Observable.throw('Application Key Not Provided in Request Model');
 		}	
 
-		// console.log('CDF SERVICE DATA ISLAND REQUEST...', requestModel);
-		// console.log('CDF SERVICE DATA ISLAND cacheKey...', cacheKey);
+		// console.log('CDF SERVICE REQUEST...', requestModel);
+		// console.log('CDF SERVICE cacheKey...', cacheKey);
 
 		if (cacheKey && this.cacheService.exists(cacheKey))
 		{ 
@@ -57,92 +57,19 @@ export class CdfDataService
 			{
 				//JOIN ALL REQUESTS TOGETHER INTO A BATCH TO BE FORKED....
 				let observableBatch: Observable<any>[] = [];	
-
 				
-				//ADD OBSERVABLE FOR AN ARRAY OF GET REQUESTS				
-				if (requestModel.GetList && requestModel.GetList.length > 0)
+				//ADD OBSERVABLE FOR AN ARRAY OF HTTP REQUESTS BUILT FROM PASSED REQUEST OPTIONS				
+				if (requestModel.RequestOptionsList && requestModel.RequestOptionsList.length > 0)
 				{
-					for (let urlIndex in requestModel.GetList) 
+					for (let requestIndex in requestModel.RequestOptionsList) 
 					{						
-						let restModel = requestModel.GetList[ urlIndex ];
-						let domainModel = CdfDomainService.GetDomainModelFromUrl(restModel.URL, requestModel.ApplicationKey);
-
-						//SET AUTHORIZATION MODEL.  AUTHORIZATION MODEL MAY HAVE ACCESS TOKEN TO BE USED IN HTTP REQUESTS						
-						if (restModel.AuthorizationModel && restModel.AuthorizationModel.HasAuthorizationToken)
-						{ 
-							domainModel.SetAuthorizationModel(restModel.AuthorizationModel);
-						}	
+						let requestOptions: RequestOptions = requestModel.RequestOptionsList[ requestIndex ];
+						let domainModel : BaseDomainInterface = CdfDomainService.GetDomainModelFromUrl(requestOptions, requestModel.ApplicationKey);
 						
 						//console.log('*****************  DOMAIN MODEL:', domainModel);
-
-						observableBatch.push(domainModel.HttpGet(restModel.URL));
+						observableBatch.push(domainModel.HttpRequest(requestOptions));
 					}
 				}	
-
-				
-				//ADD OBSERVABLE FOR AN ARRAY OF POST REQUESTS
-				if (requestModel.PostList && requestModel.PostList.length > 0)
-				{
-					for (let urlIndex in requestModel.PostList) 
-					{
-						let restModel = requestModel.PostList[ urlIndex ];
-						let domainModel = CdfDomainService.GetDomainModelFromUrl(restModel.URL, requestModel.ApplicationKey);
-
-						//SET AUTHORIZATION MODEL.  AUTHORIZATION MODEL MAY HAVE ACCESS TOKEN TO BE USED IN HTTP REQUESTS	
-						if (restModel.AuthorizationModel && restModel.AuthorizationModel.HasAuthorizationToken)
-						{ 
-							domainModel.SetAuthorizationModel(restModel.AuthorizationModel);
-						}	
-						
-						//console.log('*****************  DOMAIN MODEL:', domainModel);
-
-						observableBatch.push(domainModel.HttpPost(restModel));
-					}					
-				}	
-
-				
-				//ADD OBSERVABLE FOR AN ARRAY OF PUT REQUESTS
-				if (requestModel.PutList && requestModel.PutList.length > 0)
-				{
-					for (let urlIndex in requestModel.PutList) 
-					{
-						let restModel = requestModel.PutList[ urlIndex ];
-						let domainModel = CdfDomainService.GetDomainModelFromUrl(restModel.URL, requestModel.ApplicationKey);
-
-						//SET AUTHORIZATION MODEL.  AUTHORIZATION MODEL MAY HAVE ACCESS TOKEN TO BE USED IN HTTP REQUESTS	
-						if (restModel.AuthorizationModel && restModel.AuthorizationModel.HasAuthorizationToken)
-						{ 
-							domainModel.SetAuthorizationModel(restModel.AuthorizationModel);
-						}	
-						
-						//console.log('*****************  DOMAIN MODEL:', domainModel);
-
-						observableBatch.push(domainModel.HttpPut(restModel));
-					}					
-				}	
-
-				
-				//ADD OBSERVABLE FOR AN ARRAY OF DELETE REQUESTS
-				if (requestModel.DeleteList && requestModel.DeleteList.length > 0)
-				{
-					for (let urlIndex in requestModel.DeleteList) 
-					{
-						let restModel = requestModel.DeleteList[ urlIndex ];
-						let domainModel = CdfDomainService.GetDomainModelFromUrl(restModel.URL, requestModel.ApplicationKey);
-
-						//SET AUTHORIZATION MODEL.  AUTHORIZATION MODEL MAY HAVE ACCESS TOKEN TO BE USED IN HTTP REQUESTS	
-						if (restModel.AuthorizationModel && restModel.AuthorizationModel.HasAuthorizationToken)
-						{ 
-							domainModel.SetAuthorizationModel(restModel.AuthorizationModel);
-						}	
-						
-						//console.log('*****************  DOMAIN MODEL:', domainModel);
-
-						observableBatch.push(domainModel.HttpDelete(restModel));
-					}					
-				}	
-
-
 
 				//console.log('**************** observableBatch:', observableBatch);
 				
