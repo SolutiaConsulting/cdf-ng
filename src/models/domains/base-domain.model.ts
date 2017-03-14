@@ -32,7 +32,7 @@ export class BaseDomainModel implements BaseDomainInterface
 
     constructor () 
 	{
-		this.http = this.InjectHttp();  
+		this.http = this.InjectHttp();  		
     }
 
 	InjectHttp() : Http
@@ -57,11 +57,12 @@ export class BaseDomainModel implements BaseDomainInterface
 
     HasToken(): boolean
 	{
-		let authTokenValue = this.GetTokenValueFromStorage();	
-
-		return (authTokenValue != undefined);
+		let tokenModel:CdfAuthenticationTokenModel = this.GetTokenModelFromStorage();	
+		
+		return (tokenModel && tokenModel.AccessToken != undefined);
 	};
 
+	
 	/*
 	the token set here is of type IAuthenticationDataContract from https://webapi.cdf.cloud/api/token/generate-token
 	*/
@@ -69,27 +70,7 @@ export class BaseDomainModel implements BaseDomainInterface
 	{
 		// console.log('SET TOKEN DOMAIN:', DomainRootUrl);
 		// console.log('SET TOKEN:', token);
-
 		localStorage.setItem(this.DomainRootUrl, JSON.stringify(tokenModel));
-	};
-	
-
-	GetTokenValueFromStorage(): string
-	{ 
-		let authTokenStorage = (localStorage.getItem(this.DomainRootUrl)) ? JSON.parse(localStorage.getItem(this.DomainRootUrl)) : undefined;
-		let authTokenValue = (authTokenStorage && authTokenStorage.access_token) ? authTokenStorage.access_token : undefined;
-		
-		return authTokenValue;
-	};
-
-
-    GetBearerToken(): string
-	{
-		//console.log('GET TOKEN DOMAIN:', DomainRootUrl);
-
-		let authTokenValue = this.GetTokenValueFromStorage();			
-		
-		return (authTokenValue) ? 'Bearer ' + authTokenValue : undefined;
 	};
 
 
@@ -98,140 +79,96 @@ export class BaseDomainModel implements BaseDomainInterface
 		if (localStorage.getItem(this.DomainRootUrl))
 		{ 
 			localStorage.removeItem(this.DomainRootUrl);
-		}	
+		}		
 	};	
 
-	HashUrlFragment(urlFragment : string) : number
-	{
-		let hash = 5381;
 
-		for (let i = 0; i < urlFragment.length; i++) 
+	GetTokenModelFromStorage(): CdfAuthenticationTokenModel
+	{ 
+		let tokenModel = (localStorage.getItem(this.DomainRootUrl)) ? localStorage.getItem(this.DomainRootUrl) : undefined;
+
+		if(tokenModel)		
 		{
-			let char = urlFragment.charCodeAt(i);
-			hash = ((hash << 5) + hash) + char; /* hash * 33 + c */
+			return JSON.parse(tokenModel);
 		}
 
-		return hash;		
+		return undefined;
+	};
+
+
+    GetAuthorizationToken(): string
+	{
+		if (this.HasToken())
+		{		
+			let tokenModel = this.GetTokenModelFromStorage();			
+					
+			return (tokenModel.TokenType && tokenModel.AccessToken) ? tokenModel.TokenType + ' ' + tokenModel.AccessToken : undefined;
+		}
 	};
 
 	
 	AuthenticateObservable(url: string) : Observable<any>
 	{
-		//DELETE TOKEN
-		this.DeleteToken();
-
 		return Observable.create(observer => 
-		{
-			var authToken = (this.HasToken()) ? this.GetTokenValueFromStorage() : undefined;		
-			
-			if (authToken)
+		{			
+			let headers = new Headers({ 'Content-Type': 'application/json' }); 	// ... Set content type to JSON
+			let options = new RequestOptions({ headers: headers });		
+										
+			let requestModel = 
 			{
-				//COMPLETE THIS LEG OF OBSERVER, RETURN TOKEN
-				observer.next(authToken);
-				observer.complete();
-			}
-			else
-			{
-                let headers = new Headers({ 'Content-Type': 'application/json' }); 	// ... Set content type to JSON
-                let options = new RequestOptions({ headers: headers });		
-                                            
-                let requestModel = 
-                {
-					ApplicationKey: this.ApplicationKey,
-					RequestUrl: url
-                };						
+				ApplicationKey: this.ApplicationKey,
+				RequestUrl: url
+			};						
 
-				console.log('************* POST BODY *************:', JSON.stringify(requestModel));
-				
-                let postUrl = CdfConfigService.CDF_WEBAPI_BASE_URL + 'token/generate-token';
+			let postUrl = CdfConfigService.CDF_WEBAPI_BASE_URL + 'token/generate-token';
 
-                let newTokenSubscription = this.http.post(postUrl, JSON.stringify(requestModel), options)
-                    .map(res => res.json())
-                    .subscribe (
-                        //SUCCESS
-                        data =>
-                        {
-                            //console.log('STEP 1.  SUCCESS WE HAVE A NEW TOKEN:', data);
+			let newTokenSubscription = this.http.post(postUrl, requestModel, options)
+				.map(res => res.json())
+				.subscribe (
+					//SUCCESS
+					data =>
+					{
+						//console.log('STEP 1.  SUCCESS WE HAVE A NEW TOKEN:', data);
 
-                            //SET TOKEN RECEIVED FROM API
-							let tokenModel = new CdfAuthenticationTokenModel(data);
-                            this.SetToken(tokenModel);
+						//SET TOKEN RECEIVED FROM API
+						let tokenModel = new CdfAuthenticationTokenModel(data);
+						this.SetToken(tokenModel);
 
-                            //COMPLETE THIS LEG OF OBSERVER, RETURN TOKEN 
-                            observer.next(data);
-                            observer.complete();
-                        },
+						//COMPLETE THIS LEG OF OBSERVER, RETURN TOKEN 
+						observer.next(data);
+						observer.complete();
+					},
 
-                        //ERROR
-                        err =>
-                        { 
-                            //console.log('authenticateObservable error:', err);
-                        },
+					//ERROR
+					err =>
+					{ 
+						//console.log('authenticateObservable error:', err);
+					},
 
-                        //COMPLETE
-                        () =>
-                        { 
-                            if (newTokenSubscription)
-                            { 
-                                newTokenSubscription.unsubscribe();
-                            }							
-                        }
-                    );
-			}
+					//COMPLETE
+					() =>
+					{ 
+						if (newTokenSubscription)
+						{ 
+							newTokenSubscription.unsubscribe();
+						}							
+					}
+				);
         });
 	};
 
 
-	//HTTP REQUEST	
 	HttpRequest(requestOptions: RequestOptions): Observable<any>
 	{
 		let request = this.CreateRequest(requestOptions);
 
-		switch(requestOptions.responseType)		
-			{
-				case ResponseContentType.ArrayBuffer:
-					{
-						return this.http.request(request)
-							.map((res: Response) => res.arrayBuffer())
-							.catch((err) => this.HandleError(err, request.url))
-							.finally(() =>
-							{ 
+		return this.http.request(request)
+			.map((res: Response) =>  this.HandleResponseMapping(res, requestOptions))
+			.catch((err) => this.HandleError(err, request.url))
+			.finally(() =>
+			{ 
 
-							});
-					};
-
-				case ResponseContentType.Blob:
-					{
-						return this.http.request(request)
-							.map((res: Response) => res.blob())
-							.catch((err) => this.HandleError(err, request.url))
-							.finally(() =>
-							{ 
-
-							});
-					};
-				case ResponseContentType.Text:
-					{
-						return this.http.request(request)
-							.map((res: Response) => res.text())
-							.catch((err) => this.HandleError(err, request.url))
-							.finally(() =>
-							{ 
-
-							});
-					};
-				default:
-					{
-						return this.http.request(request)
-							.map((res: Response) => res.json())
-							.catch((err) => this.HandleError(err, request.url))
-							.finally(() =>
-							{ 
-
-							});						
-					};
-			}
-
+			});
 	};	
 
 
@@ -246,20 +183,50 @@ export class BaseDomainModel implements BaseDomainInterface
 		//IF TOKEN EXISTS IN LOCAL STORAGE FOR THIS DOMAIN URL, THEN USE IT AS AUTHORIZATION
 		if (this.HasToken())
 		{ 
-			let bearerToken = this.GetBearerToken();
-			requestOptions.headers.append('Authorization', bearerToken);
-			requestOptions.headers.append('Access-Control-Allow-Origin', '*');
-		}
-		//ELSE IF THIS REQUEST HAS AUTHORIZATON SET IN HEADERS, USE IT
-		else if (this.hasAuthorization(requestOptions))
-		{ 
-			requestOptions.headers.append('authorization', requestOptions.headers['Authorization']);
+			let bearerToken = this.GetAuthorizationToken();
+
+			if (!requestOptions.headers.get('Authorization'))
+			{ 
+				requestOptions.headers.append('Authorization', bearerToken);
+			} 
+
+			if (!requestOptions.headers.get('Access-Control-Allow-Origin'))
+			{ 
+				requestOptions.headers.append('Access-Control-Allow-Origin', '*');
+			} 
 		}
 
 		console.log('CDF REQUEST OPTIONS', requestOptions);
 
 		return new Request(requestOptions);
 	};
+
+
+	//HANDLE MAPPING RESULTS
+	HandleResponseMapping(response: Response, requestOptions: RequestOptions): any
+	{ 
+		switch(requestOptions.responseType)		
+			{
+				case ResponseContentType.ArrayBuffer:
+					{
+						return response.arrayBuffer();
+					};
+
+				case ResponseContentType.Blob:
+					{
+						return response.blob();
+					};
+				case ResponseContentType.Text:
+					{
+						return response.text();
+					};
+				default:
+					{
+						return response.json();
+					};
+			}
+	};
+
 
 	//HANDLE ERRORS FROM HTTP CALLS...
 	HandleError(err: any, url: string): Observable<any>
@@ -307,11 +274,25 @@ export class BaseDomainModel implements BaseDomainInterface
             {
                 error: err,
                 errorUrl: url,
-				errorObject: (err[ '_body' ] && err[ '_body' ].length) ? err.json() : {},
+				errorObject: err.json(),
                 status: err.status
             }
 		
 		return Observable.throw(errorObject);
+	};
+
+
+	HashUrlFragment(urlFragment : string) : number
+	{
+		let hash = 5381;
+
+		for (let i = 0; i < urlFragment.length; i++) 
+		{
+			let char = urlFragment.charCodeAt(i);
+			hash = ((hash << 5) + hash) + char; /* hash * 33 + c */
+		}
+
+		return hash;		
 	};
 
 
@@ -322,10 +303,10 @@ export class BaseDomainModel implements BaseDomainInterface
 	
 	private hasAuthorization(requestOptions : RequestOptions): boolean
 	{ 
-		return (requestOptions.headers && requestOptions.headers['Authorization'] && requestOptions.headers['Authorization'].length > 0);
+		let authorization = requestOptions.headers.get('Authorization');
+		return (authorization && authorization.length > 0);
 	}
 
-	
 	static CreateDefaultCookieXSRFStrategy() 
 	{
 		return new CookieXSRFStrategy();

@@ -3,7 +3,8 @@ import
 {
     Http,
     Request,
-    RequestOptions
+    RequestOptions,
+    Response
 }                                           from '@angular/http';
 
 import { CdfAuthenticationTokenModel } 		from '../index';
@@ -16,15 +17,17 @@ export interface BaseDomainInterface
     
     HasToken(): boolean;
     SetToken(tokenModel: CdfAuthenticationTokenModel): void 
-    GetTokenValueFromStorage(): string;
-    GetBearerToken(): string; 
     DeleteToken(): void;    
-    
-    HashUrlFragment(urlFragment : string) : number;
 
+    GetTokenModelFromStorage(): CdfAuthenticationTokenModel;
+    GetAuthorizationToken(): string; 
+    
     AuthenticateObservable(url: string): Observable<any>;
     HttpRequest(requestOptions: RequestOptions): Observable<any>;
     CreateRequest(requestOptions: RequestOptions): Request;
 
+    HandleResponseMapping(response: Response, requestOptions: RequestOptions): any
     HandleError(err: any, url: string): Observable<any>;
+
+    HashUrlFragment(urlFragment : string) : number;
 }

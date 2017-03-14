@@ -4,16 +4,16 @@ from https://webapi.cdf.cloud/api/token/generate-token
  */
 export class CdfAuthenticationTokenModel
 {
-	token_type: string;
-	access_token: string;
-	refresh_token: string;
-	expires_in: string;
+	TokenType: string;
+	AccessToken: string;
+	RefreshToken: string;
+	ExpiresIn: string;
 
 	constructor(rawJson:any)
 	{
-		this.token_type = (rawJson.token_type) ? rawJson.token_type : '';
-		this.access_token = (rawJson.access_token) ? rawJson.access_token : '';
-		this.refresh_token = (rawJson.refresh_token) ? rawJson.refresh_token : '';
-		this.expires_in =  (rawJson.expires_in) ? rawJson.expires_in : '';
+		this.TokenType = (rawJson.token_type) ? rawJson.token_type : undefined;
+		this.AccessToken = (rawJson.access_token) ? rawJson.access_token : undefined;
+		this.RefreshToken = (rawJson.refresh_token) ? rawJson.refresh_token : undefined;
+		this.ExpiresIn =  (rawJson.expires_in) ? rawJson.expires_in : undefined;
 	}
 }

@@ -4,3 +4,4 @@
 export * from './cdf-config.service';
 export * from './cdf-data.service';
 export * from './cdf-domain.service';
+export * from './cdf-token.service';

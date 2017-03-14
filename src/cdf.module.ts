@@ -2,7 +2,10 @@ import { NgModule, ModuleWithProviders }	from '@angular/core';
 import { CommonModule }						from '@angular/common';
 
 import { CacheService} 						from './storage/cache.service';
-import { CdfDataService} 					from './services';
+import { 
+	CdfDataService,
+	CdfTokenService
+} 											from './services';
 
 @NgModule({
 	imports:
@@ -18,7 +21,8 @@ import { CdfDataService} 					from './services';
 	providers:
 	[
 		CacheService,
-		CdfDataService
+		CdfDataService,
+		CdfTokenService
 	]
 })
 export class CdfModule {}

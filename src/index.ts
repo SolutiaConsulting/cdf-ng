@@ -3,4 +3,4 @@
  */
 export * from './models/index';
 export * from './services/index';
-export * from "./cdf.module";
+export * from './cdf.module';

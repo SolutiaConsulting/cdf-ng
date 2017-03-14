@@ -17,6 +17,7 @@ export class ApiTwitterModel extends BaseDomainModel
     readonly TWITTER_API_URL = 'https://api.twitter.com/1.1/';    
 
     http: Http;
+    TwitterRequestUrl: string;
 
     constructor () 
     { 
@@ -28,23 +29,26 @@ export class ApiTwitterModel extends BaseDomainModel
 	//HTTP REQUEST	
 	HttpRequest(requestOptions: RequestOptions): Observable<any>
     {
-        let authorizationToken = (super.HasToken()) ? super.GetBearerToken() : 'TOKEN-NOT-KNOWN';
+        this.TwitterRequestUrl = requestOptions.url;
         let urlFragment = requestOptions.url.replace(this.TWITTER_API_URL,'');
         let urlFragmentHash = super.HashUrlFragment(urlFragment);        
-        let twitterUrl = CdfConfigService.CDF_WEBAPI_BASE_URL + '/twitter/get/' + urlFragmentHash;
+        let twitterProxyUrl = CdfConfigService.CDF_WEBAPI_BASE_URL + '/twitter/get/' + urlFragmentHash;
 
-        requestOptions.url = twitterUrl;
-        requestOptions.headers.append('Authorization', authorizationToken);
-        requestOptions.headers.append('UrlFragment', urlFragment);
+        if (!requestOptions.headers.get('UrlFragment'))
+        { 
+            requestOptions.headers.append('UrlFragment', urlFragment);
+        }         
 
         let request = super.CreateRequest(requestOptions);
 
+        request.url = twitterProxyUrl;
+
 		return this.http.request(request)
-			.map((res: Response) => (res['_body'] && res['_body'].length) ? res.json() : {})
-			.catch((err) => this.HandleError(err, request.url))
+            .map((res: Response) =>  super.HandleResponseMapping(res, requestOptions))			
+			.catch((err) => super.HandleError(err, this.TwitterRequestUrl))
 			.finally(() =>
 			{ 
 
 			});
-	};  
+	};    
 }
