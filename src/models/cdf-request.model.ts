@@ -41,8 +41,7 @@ export class CdfRequestModel
 		{
 			this.RequestOptionsList.push(requestOptions);
 		}		
-	};
-	
+	};	
 
 	AddGetRequest(url: string, body?: Object): void
 	{ 

@@ -196,7 +196,7 @@ export class BaseDomainModel implements BaseDomainInterface
 			} 
 		}
 
-		console.log('CDF REQUEST OPTIONS', requestOptions);
+		//console.log('CDF REQUEST OPTIONS', requestOptions);
 
 		return new Request(requestOptions);
 	};
