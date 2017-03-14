@@ -32,7 +32,7 @@ export class ApiTwitterModel extends BaseDomainModel
         this.TwitterRequestUrl = requestOptions.url;
         let urlFragment = requestOptions.url.replace(this.TWITTER_API_URL,'');
         let urlFragmentHash = super.HashUrlFragment(urlFragment);        
-        let twitterProxyUrl = CdfConfigService.CDF_WEBAPI_BASE_URL + '/twitter/get/' + urlFragmentHash;
+        let twitterProxyUrl = CdfConfigService.CDF_WEBAPI_BASE_URL + 'twitter/get/' + urlFragmentHash;
 
         if (!requestOptions.headers.get('UrlFragment'))
         { 
