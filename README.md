@@ -1,4 +1,4 @@
-# Content Delivery Framework for Angular (CDF-NG)
+# Content Delivery Framework (CDF) for Angular (@cdf/cdf-ng)
 [![version][npm-image]][npm-url]
 [![downloads][downloads-image]][downloads-url]
 
@@ -210,9 +210,6 @@ export class AuthService
 # Meta
 
 Tom Schreck – [@tschreck](https://twitter.com/tschreck) – tom_schreck@solutiaconsulting.com
-
-
-Distributed under the XYZ license. See ``LICENSE`` for more information.
 
 [https://github.com/tomschreck](https://github.com/tomschreck)
 
