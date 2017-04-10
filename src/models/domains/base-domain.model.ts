@@ -142,8 +142,8 @@ export class BaseDomainModel implements BaseDomainInterface
 					//ERROR
 					err =>
 					{ 
-						//console.log('authenticateObservable error:', err);
-						observer.error(err);
+						//console.log('authenticateObservable error:', err.json());
+						observer.error(err.json());
 					},
 
 					//COMPLETE
